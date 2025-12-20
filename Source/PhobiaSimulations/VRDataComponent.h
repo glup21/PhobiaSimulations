@@ -39,6 +39,26 @@ public:
 	UPROPERTY()
 	FRotator RightHandRotation;
 
+	UPROPERTY()
+	FVector LeftHandLinearVelocity;
+
+	UPROPERTY()
+	FVector RightHandLinearVelocity;
+
+	UPROPERTY()
+	FVector CameraLinearVelocity;
+
+	UPROPERTY()
+	FVector LeftHandAngularVelocity;
+
+	UPROPERTY()
+	FVector RightHandAngularVelocity;
+
+	UPROPERTY()
+	FVector CameraAngularVelocity;
+
+	UPROPERTY()
+	FVector CameraForwardVector;
 };
 
 
@@ -54,8 +74,11 @@ public:
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
-	
 	APawn* owner;
+
+	FRotator LastLeftHandRotation;
+	FRotator LastRightHandRotation;
+	FRotator LastCameraRotation;
 
 public:	
 	TArray<FVRFrameData> FrameLog;

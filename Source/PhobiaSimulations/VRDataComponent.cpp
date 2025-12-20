@@ -3,7 +3,7 @@
 #include "VRDataComponent.h"
 #include "GameFramework/Pawn.h"
 #include "MotionControllerComponent.h"
-#include <String>
+#include "UObject/UnrealType.h"
 
 // Sets default values for this component's properties
 UVRDataComponent::UVRDataComponent()
@@ -15,6 +15,23 @@ UVRDataComponent::UVRDataComponent()
 	// ...
 }
 
+FString LogStruct(const void* StructPtr, UScriptStruct* Struct)
+{
+	FString Output;
+
+	for (TFieldIterator<FProperty> It(Struct); It; ++It)
+	{
+		FProperty* Property = *It;
+		FString Name = Property->GetNameCPP();
+
+		FString Value;
+		Property->ExportText_InContainer(0, Value, StructPtr, StructPtr, nullptr, 0);
+
+		Output += Name + TEXT(": ") + Value + TEXT(" | ");
+	}
+
+	return Output;
+}
 
 // Called when the game starts
 void UVRDataComponent::BeginPlay()
@@ -47,7 +64,7 @@ void UVRDataComponent::BeginPlay()
 			RightHand = MC;
 		}
 	}
-
+	Camera = owner->FindComponentByClass<UCameraComponent>();
 	ensureMsgf(LeftHand && RightHand, TEXT("Failed to find both VR hands"));
 	
 }
@@ -62,18 +79,13 @@ void UVRDataComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 
 	if (!owner)
 	{
-		return; // nothing to do
+		return; 
 	}
 
-	// Try to find Camera once
 	if (!Camera)
 	{
-		Camera = owner->FindComponentByClass<UCameraComponent>();
-		if (!Camera)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Camera component not found"));
-			return;
-		}
+		UE_LOG(LogTemp, Warning, TEXT("Camera component not found"));
+		return;
 	}
 
 	if (!LeftHand || !RightHand)
@@ -81,20 +93,44 @@ void UVRDataComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 		UE_LOG(LogTemp, Warning, TEXT("Hands not initialized"));
 		return;
 	}
-
+	float deltaTime = GetWorld()->GetDeltaSeconds();
 	newFrameData.Timestamp = GetWorld()->GetTimeSeconds();
 
+	// Location
 	newFrameData.PlayerPosition = owner->GetActorLocation();
 	newFrameData.CameraPosition = Camera->GetComponentLocation();
 	newFrameData.LeftHandPosition = LeftHand->GetComponentLocation();
 	newFrameData.RightHandPosition = RightHand->GetComponentLocation();
 
+	// Rotation
 	newFrameData.CameraRotation = Camera->GetComponentRotation();
 	newFrameData.LeftHandRotation = LeftHand->GetComponentRotation();
 	newFrameData.RightHandRotation = RightHand->GetComponentRotation();
 
+	// Linear velocity
+	newFrameData.LeftHandLinearVelocity = LeftHand->GetComponentVelocity();
+	newFrameData.RightHandLinearVelocity = RightHand->GetComponentVelocity();
+	newFrameData.CameraLinearVelocity = Camera->GetComponentVelocity();
+
+	// Angular velocity
+	FRotator LeftDeltaRot = LeftHand->GetComponentRotation() - LastLeftHandRotation;
+	FRotator RightDeltaRot = RightHand->GetComponentRotation() - LastRightHandRotation;
+	FRotator CameraDeltaRot = Camera->GetComponentRotation() - LastCameraRotation;
+	newFrameData.LeftHandAngularVelocity = FVector(LeftDeltaRot.Roll / DeltaTime,
+		LeftDeltaRot.Pitch / DeltaTime,
+		LeftDeltaRot.Yaw / DeltaTime);
+	newFrameData.RightHandAngularVelocity = FVector(RightDeltaRot.Roll / DeltaTime,
+		RightDeltaRot.Pitch / DeltaTime,
+		RightDeltaRot.Yaw / DeltaTime);
+	newFrameData.CameraAngularVelocity = FVector(CameraDeltaRot.Roll / DeltaTime,
+		CameraDeltaRot.Pitch / DeltaTime,
+		CameraDeltaRot.Yaw / DeltaTime);
+
+	// Misc
+	newFrameData.CameraForwardVector = Camera->GetForwardVector();
+
 	FString text = newFrameData.PlayerPosition.ToString();
-	UE_LOG(LogTemp, Display, TEXT("%s"), *text);
+	UE_LOG(LogTemp, Display, TEXT("%s"), *LogStruct(&newFrameData, FVRFrameData::StaticStruct()));
 
 	FrameLog.Add(newFrameData);
 }
