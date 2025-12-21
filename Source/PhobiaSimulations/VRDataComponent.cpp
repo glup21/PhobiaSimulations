@@ -93,7 +93,6 @@ void UVRDataComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 		UE_LOG(LogTemp, Warning, TEXT("Hands not initialized"));
 		return;
 	}
-	float deltaTime = GetWorld()->GetDeltaSeconds();
 	newFrameData.Timestamp = GetWorld()->GetTimeSeconds();
 
 	// Location
@@ -108,9 +107,18 @@ void UVRDataComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 	newFrameData.RightHandRotation = RightHand->GetComponentRotation();
 
 	// Linear velocity
-	newFrameData.LeftHandLinearVelocity = LeftHand->GetComponentVelocity();
-	newFrameData.RightHandLinearVelocity = RightHand->GetComponentVelocity();
-	newFrameData.CameraLinearVelocity = Camera->GetComponentVelocity();
+	FVector LeftDeltaLoc = LeftHand->GetComponentLocation() - LastLeftHandLocation;
+	FVector RightDeltaLoc = RightHand->GetComponentLocation() - LastRightHandLocation;
+	FVector CameraDeltaLoc = Camera->GetComponentLocation() - LastCameraLocation;
+	newFrameData.LeftHandLinearVelocity = FVector(LeftDeltaLoc.X / DeltaTime,
+		LeftDeltaLoc.Y / DeltaTime,
+		LeftDeltaLoc.Z / DeltaTime);
+	newFrameData.RightHandLinearVelocity = FVector(RightDeltaLoc.X / DeltaTime,
+		RightDeltaLoc.Y / DeltaTime,
+		RightDeltaLoc.Z / DeltaTime);
+	newFrameData.CameraLinearVelocity = FVector(CameraDeltaLoc.X / DeltaTime,
+		CameraDeltaLoc.Y / DeltaTime,
+		CameraDeltaLoc.Z / DeltaTime);
 
 	// Angular velocity
 	FRotator LeftDeltaRot = LeftHand->GetComponentRotation() - LastLeftHandRotation;

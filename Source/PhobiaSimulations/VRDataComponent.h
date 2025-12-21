@@ -80,6 +80,10 @@ protected:
 	FRotator LastRightHandRotation;
 	FRotator LastCameraRotation;
 
+	FVector LastLeftHandLocation;
+	FVector LastRightHandLocation;
+	FVector LastCameraLocation;
+
 public:	
 	TArray<FVRFrameData> FrameLog;
 	// Called every frame
