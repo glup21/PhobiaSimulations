@@ -45,11 +45,9 @@ void UVRDataComponent::BeginPlay()
 		return;
 	}
 
-	// Get components from owner
 	LeftHand = owner->FindComponentByClass<UMotionControllerComponent>();
 	RightHand = nullptr;
 
-	// If you have multiple MotionControllerComponents, distinguish them:
 	TArray<UMotionControllerComponent*> Controllers;
 	owner->GetComponents(Controllers);
 
@@ -73,73 +71,73 @@ void UVRDataComponent::BeginPlay()
 // Called every frame
 void UVRDataComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	//Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	FVRFrameData newFrameData;
+	//FVRFrameData newFrameData;
 
-	if (!owner)
-	{
-		return; 
-	}
+	//if (!owner)
+	//{
+	//	return; 
+	//}
 
-	if (!Camera)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Camera component not found"));
-		return;
-	}
+	//if (!Camera)
+	//{
+	//	UE_LOG(LogTemp, Warning, TEXT("Camera component not found"));
+	//	return;
+	//}
 
-	if (!LeftHand || !RightHand)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Hands not initialized"));
-		return;
-	}
-	newFrameData.Timestamp = GetWorld()->GetTimeSeconds();
+	//if (!LeftHand || !RightHand)
+	//{
+	//	UE_LOG(LogTemp, Warning, TEXT("Hands not initialized"));
+	//	return;
+	//}
+	//newFrameData.Timestamp = GetWorld()->GetTimeSeconds();
 
-	// Location
-	newFrameData.PlayerPosition = owner->GetActorLocation();
-	newFrameData.CameraPosition = Camera->GetComponentLocation();
-	newFrameData.LeftHandPosition = LeftHand->GetComponentLocation();
-	newFrameData.RightHandPosition = RightHand->GetComponentLocation();
+	//// Location
+	//newFrameData.PlayerPosition = owner->GetActorLocation();
+	//newFrameData.CameraPosition = Camera->GetComponentLocation();
+	//newFrameData.LeftHandPosition = LeftHand->GetComponentLocation();
+	//newFrameData.RightHandPosition = RightHand->GetComponentLocation();
 
-	// Rotation
-	newFrameData.CameraRotation = Camera->GetComponentRotation();
-	newFrameData.LeftHandRotation = LeftHand->GetComponentRotation();
-	newFrameData.RightHandRotation = RightHand->GetComponentRotation();
+	//// Rotation
+	//newFrameData.CameraRotation = Camera->GetComponentRotation();
+	//newFrameData.LeftHandRotation = LeftHand->GetComponentRotation();
+	//newFrameData.RightHandRotation = RightHand->GetComponentRotation();
 
-	// Linear velocity
-	FVector LeftDeltaLoc = LeftHand->GetComponentLocation() - LastLeftHandLocation;
-	FVector RightDeltaLoc = RightHand->GetComponentLocation() - LastRightHandLocation;
-	FVector CameraDeltaLoc = Camera->GetComponentLocation() - LastCameraLocation;
-	newFrameData.LeftHandLinearVelocity = FVector(LeftDeltaLoc.X / DeltaTime,
-		LeftDeltaLoc.Y / DeltaTime,
-		LeftDeltaLoc.Z / DeltaTime);
-	newFrameData.RightHandLinearVelocity = FVector(RightDeltaLoc.X / DeltaTime,
-		RightDeltaLoc.Y / DeltaTime,
-		RightDeltaLoc.Z / DeltaTime);
-	newFrameData.CameraLinearVelocity = FVector(CameraDeltaLoc.X / DeltaTime,
-		CameraDeltaLoc.Y / DeltaTime,
-		CameraDeltaLoc.Z / DeltaTime);
+	//// Linear velocity
+	//FVector LeftDeltaLoc = LeftHand->GetComponentLocation() - LastLeftHandLocation;
+	//FVector RightDeltaLoc = RightHand->GetComponentLocation() - LastRightHandLocation;
+	//FVector CameraDeltaLoc = Camera->GetComponentLocation() - LastCameraLocation;
+	//newFrameData.LeftHandLinearVelocity = FVector(LeftDeltaLoc.X / DeltaTime,
+	//	LeftDeltaLoc.Y / DeltaTime,
+	//	LeftDeltaLoc.Z / DeltaTime);
+	//newFrameData.RightHandLinearVelocity = FVector(RightDeltaLoc.X / DeltaTime,
+	//	RightDeltaLoc.Y / DeltaTime,
+	//	RightDeltaLoc.Z / DeltaTime);
+	//newFrameData.CameraLinearVelocity = FVector(CameraDeltaLoc.X / DeltaTime,
+	//	CameraDeltaLoc.Y / DeltaTime,
+	//	CameraDeltaLoc.Z / DeltaTime);
 
-	// Angular velocity
-	FRotator LeftDeltaRot = LeftHand->GetComponentRotation() - LastLeftHandRotation;
-	FRotator RightDeltaRot = RightHand->GetComponentRotation() - LastRightHandRotation;
-	FRotator CameraDeltaRot = Camera->GetComponentRotation() - LastCameraRotation;
-	newFrameData.LeftHandAngularVelocity = FVector(LeftDeltaRot.Roll / DeltaTime,
-		LeftDeltaRot.Pitch / DeltaTime,
-		LeftDeltaRot.Yaw / DeltaTime);
-	newFrameData.RightHandAngularVelocity = FVector(RightDeltaRot.Roll / DeltaTime,
-		RightDeltaRot.Pitch / DeltaTime,
-		RightDeltaRot.Yaw / DeltaTime);
-	newFrameData.CameraAngularVelocity = FVector(CameraDeltaRot.Roll / DeltaTime,
-		CameraDeltaRot.Pitch / DeltaTime,
-		CameraDeltaRot.Yaw / DeltaTime);
+	//// Angular velocity
+	//FRotator LeftDeltaRot = LeftHand->GetComponentRotation() - LastLeftHandRotation;
+	//FRotator RightDeltaRot = RightHand->GetComponentRotation() - LastRightHandRotation;
+	//FRotator CameraDeltaRot = Camera->GetComponentRotation() - LastCameraRotation;
+	//newFrameData.LeftHandAngularVelocity = FVector(LeftDeltaRot.Roll / DeltaTime,
+	//	LeftDeltaRot.Pitch / DeltaTime,
+	//	LeftDeltaRot.Yaw / DeltaTime);
+	//newFrameData.RightHandAngularVelocity = FVector(RightDeltaRot.Roll / DeltaTime,
+	//	RightDeltaRot.Pitch / DeltaTime,
+	//	RightDeltaRot.Yaw / DeltaTime);
+	//newFrameData.CameraAngularVelocity = FVector(CameraDeltaRot.Roll / DeltaTime,
+	//	CameraDeltaRot.Pitch / DeltaTime,
+	//	CameraDeltaRot.Yaw / DeltaTime);
 
-	// Misc
-	newFrameData.CameraForwardVector = Camera->GetForwardVector();
+	//// Misc
+	//newFrameData.CameraForwardVector = Camera->GetForwardVector();
 
-	FString text = newFrameData.PlayerPosition.ToString();
-	UE_LOG(LogTemp, Display, TEXT("%s"), *LogStruct(&newFrameData, FVRFrameData::StaticStruct()));
+	//FString text = newFrameData.PlayerPosition.ToString();
+	//UE_LOG(LogTemp, Display, TEXT("%s"), *LogStruct(&newFrameData, FVRFrameData::StaticStruct()));
 
-	FrameLog.Add(newFrameData);
+	//FrameLog.Add(newFrameData);
 }
 
