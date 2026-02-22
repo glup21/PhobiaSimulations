@@ -25,6 +25,10 @@
 		{
 			"Name": "OpenXRHandTracking",
 			"Enabled": true
+		},
+		{
+			"Name": "JsonBlueprintUtilities",
+			"Enabled": true
 		}
 	],
 	"TargetPlatforms": [
